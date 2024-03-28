@@ -22,7 +22,7 @@ getIP() {
   echo "${serverIP}"
 }
 
-install_hy2() {
+install_dependencies() {
   if [ -f "/usr/bin/apt-get" ]; then
     apt-get update -y && apt-get upgrade -y
     apt-get install -y gawk curl runit
@@ -31,11 +31,13 @@ install_hy2() {
     yum install -y epel-release
     yum install -y gawk curl runit
   fi
+}
 
+install_hy2() {
   bash <(curl -fsSL https://get.hy2.sh/)
 
   mkdir -p /etc/hysteria/
-  openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500 && chown root:root /etc/hysteria/server.key /etc/hysteria/server.crt
+  openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500
 
   cat >/etc/hysteria/config.yaml <<EOF
 listen: :$getPort
@@ -85,5 +87,6 @@ client_hy2() {
   echo
 }
 
+install_dependencies
 install_hy2
 client_hy2
