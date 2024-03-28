@@ -3,11 +3,11 @@
 # 安装必要的软件包
 if [ -f "/usr/bin/apt-get" ]; then
     apt-get update -y && apt-get upgrade -y
-    apt-get install -y gawk curl
+    apt-get install -y gawk curl supervisor
 else
     yum update -y && yum upgrade -y
     yum install -y epel-release
-    yum install -y gawk curl
+    yum install -y gawk curl supervisor
 fi
 
 # 下载并安装 Hysteria
@@ -43,8 +43,20 @@ EOF
 # 生成 TLS 证书
 openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500 && chown hysteria /etc/hysteria/server.key && chown hysteria /etc/hysteria/server.crt
 
-# 启动 Hysteria 进程
-nohup /usr/local/bin/hysteria-server -config /etc/hysteria/config.yaml >/dev/null 2>&1 &
+# 配置 Supervisor
+cat >/etc/supervisor/conf.d/hysteria.conf <<EOF
+[program:hysteria]
+command=/usr/local/bin/hysteria-server -config /etc/hysteria/config.yaml
+autostart=true
+autorestart=true
+redirect_stderr=true
+stdout_logfile=/var/log/hysteria.log
+EOF
+
+# 重新加载 Supervisor 配置并启动 Hysteria 服务
+supervisorctl reread
+supervisorctl update
+supervisorctl start hysteria
 
 # 显示配置信息
 hylink=$(echo -n "${hyPasswd}@$(curl -s -4 http://www.cloudflare.com/cdn-cgi/trace | grep "ip" | awk -F "=" '{print $2}'):${getPort}/?insecure=1&sni=bing.com#1024-Hysteria2")
