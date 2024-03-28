@@ -11,7 +11,8 @@ else
 fi
 
 # 下载并安装 Hysteria
-bash <(curl -fsSL https://get.hy2.sh/)
+wget https://github.com/apernet/hysteria/releases/download/app%2Fv2.4.0/hysteria-linux-amd64 -O /usr/local/bin/hysteria-server
+chmod +x /usr/local/bin/hysteria-server
 
 # 创建 Hysteria 配置目录
 mkdir -p /etc/hysteria/
