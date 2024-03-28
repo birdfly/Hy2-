@@ -35,7 +35,7 @@ install_hy2() {
   bash <(curl -fsSL https://get.hy2.sh/)
 
   mkdir -p /etc/hysteria/
-  openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500 && chown hysteria /etc/hysteria/server.key && chown hysteria /etc/hysteria/server.crt
+  openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500 && chown root:root /etc/hysteria/server.key /etc/hysteria/server.crt
 
   cat >/etc/hysteria/config.yaml <<EOF
 listen: :$getPort
