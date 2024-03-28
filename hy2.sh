@@ -38,6 +38,7 @@ install_hy2() {
 
   mkdir -p /etc/hysteria/
   openssl req -x509 -nodes -newkey ec:<(openssl ecparam -name prime256v1) -keyout /etc/hysteria/server.key -out /etc/hysteria/server.crt -subj "/CN=bing.com" -days 36500
+  chmod 600 /etc/hysteria/server.key /etc/hysteria/server.crt
 
   cat >/etc/hysteria/config.yaml <<EOF
 listen: :$getPort
